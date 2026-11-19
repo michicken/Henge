@@ -77,20 +77,25 @@ enum JITBootstrap {
     @discardableResult
     static func prewarm() -> Bool {
         if prewarmed { return true }
+        let debuggerAttached = isDebuggerAttached
+        let usesStikDebug = stikDebugMayServiceTraps
+        // The native prewarm records its first result for this process.
+        // Wait until StikDebug attaches before making that attempt.
+        if usesStikDebug && !debuggerAttached { return false }
         // Before iOS 26 Henge can make the region itself where the device allows it (a jailbreak,
         // a debugger that attached and let go such as TrollStore's enable-jit, or dynamic-codesigning),
         // so it does not wait for CS_DEBUGGED there if jailbroken: Dopamine hides that flag from apps unless
         // "Allow JIT in Apps" is on, while still letting them run code they wrote.
-        guard isDebuggerAttached || (canGrantOwnJIT && !selfGrantTried) else {
+        guard debuggerAttached || (canGrantOwnJIT && !selfGrantTried) else {
             HengeLog.log("jit", "no debugger attached yet; not prewarming")
             return false
         }
-        if !isDebuggerAttached { selfGrantTried = true }
+        if !debuggerAttached { selfGrantTried = true }
         // Before iOS 26, unless StikDebug's script is what attached, no brk: TrollStore's enable-jit (and its Open with JIT)
         // attaches for 100 ms and services nothing, and a brk in that window stops Henge for good (TrollStore then says
         // "trollstorehelper returned 3"). A debugged process there makes its own executable memory anyway: QEMU maps its
         // buffer with MAP_JIT and the translation layer makes its region itself.
-        if canGrantOwnJIT && !stikDebugMayServiceTraps {
+        if canGrantOwnJIT && !usesStikDebug {
             selfGrantTried = true
             if mapJITWorks {
                 HengeLog.log("jit", "not trapping for a JIT region (no StikDebug); MAP_JIT executes here")
