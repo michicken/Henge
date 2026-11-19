@@ -4,10 +4,11 @@
 
 <h1 align="center">Henge</h1>
 
-> **Experimental A12Z fork:** the `experimental/a12z` branch adds CPU instruction
-> fallbacks for the 2020 iPad Pro. macOS boot, graphics and memory pressure on
-> A12Z are not yet verified. See [build instructions](docs/a12z-build.md) and
-> [port scope and testing](docs/a12z-port.md). The original project's documentation follows.
+> **Experimental A12 support:** this branch enables boot testing on the 2018
+> 11-inch iPad Pro (A12X) and the 2020 iPad Pro (A12Z). On A12Z, macOS reaches
+> Setup Assistant. A12X boot and a usable desktop on either chip still need
+> device testing. See [build instructions](docs/a12z-build.md) and
+> [device testing notes](docs/a12z-port.md).
 
 <p align="center">macOS on your iPhone and iPad.</p>
 

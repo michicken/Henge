@@ -36,6 +36,7 @@ enum Device {
 
     /// How much memory to suggest for a new Mac: what leaves this device room for iOS.
     static var suggestedRAMGB: Int {
+        if experimentalA12X { return 2 }
         if experimentalA12Z { return 3 }
         let mb = ProcessInfo.processInfo.physicalMemory >> 20
         // m4 fork: an 8 GB iPad (7.4 GB usable) thrashes and kills the Mac at 6 GB: 16 GB devices only.
@@ -52,19 +53,21 @@ enum Device {
         return nil
     }
 
-    /// Only the 2020 iPad Pro models are opted into the experimental software ISA path.
-    static let experimentalA12Z = ["iPad8,9", "iPad8,10", "iPad8,11", "iPad8,12"].contains(HengeLog.deviceModel)
-    static let experimentalA12ZText = "Experimental A12Z support: CPU instruction fallbacks are enabled. macOS boot and graphics are not yet verified on this iPad. Start with Sequoia and 3 GB of guest memory."
+    // Opt in the 4 GB 2018 11-inch models and the 2020 A12Z models explicitly.
+    static let experimentalA12X = ["iPad8,1", "iPad8,3"].contains(HengeLog.deviceModel)
+    private static let experimentalA12Z = ["iPad8,9", "iPad8,10", "iPad8,11", "iPad8,12"].contains(HengeLog.deviceModel)
+    static let experimentalA12 = experimentalA12X || experimentalA12Z
+    static let experimentalA12Text = "Experimental A12 support. Start with Sequoia and \(suggestedRAMGB) GB of guest memory. macOS setup and graphics may fail on this iPad."
 
     static let chipTooOld: Bool = {
-        if experimentalA12Z { return false }
+        if experimentalA12 { return false }
         let model = HengeLog.deviceModel
         guard model.hasPrefix("iPhone") || model.hasPrefix("iPad"),
               let major = Int(model.drop { !$0.isNumber }.prefix { $0.isNumber }) else { return false }
         return major < 13
     }()
 
-    static let chipTooOldText = "This chip is not supported. Use an A14/M1 or newer, or a 2020 A12Z iPad Pro with experimental support."
+    static let chipTooOldText = "This chip is not supported. Use an A14/M1 or newer, or an iPad Pro model with experimental A12 support."
 }
 
 /// A keyboard attached to the device. iOS reports each key going down and coming up by its HID usage,

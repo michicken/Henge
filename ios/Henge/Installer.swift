@@ -166,7 +166,7 @@ final class Installer: NSObject, ObservableObject {
         // A new machine identity, as VZMacMachineIdentifier makes one: a random ECID.
         let ecid = UInt64.random(in: 1 << 40 ..< 1 << 62)
         var mac = VirtualMac(name: name, ecid: ecid, seed: 0, ramMB: ramMB, diskBytes: 64 << 30)
-        (mac.screenWidth, mac.screenHeight) = Device.fittingScreen
+        (mac.screenWidth, mac.screenHeight) = Device.experimentalA12X ? Device.performanceScreen : Device.fittingScreen
         let fm = FileManager.default
         try fm.createDirectory(at: mac.directory, withIntermediateDirectories: true)
         Machines.excludeFromBackup(Machines.root)

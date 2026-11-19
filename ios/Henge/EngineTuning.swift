@@ -20,9 +20,9 @@ enum EngineTuning {
 
     static func apply() {
         var env = defaults
-        // Record the render-pass configuration before entering the A12Z driver.
+        // Record the render-pass configuration before entering the A12 GPU driver.
         // A tuning file can turn this off with HV_PVG_DIAGNOSTICS=0.
-        if Device.experimentalA12Z { env["HV_PVG_DIAGNOSTICS"] = "1" }
+        if Device.experimentalA12 { env["HV_PVG_DIAGNOSTICS"] = "1" }
         let d = UserDefaults.standard
         if d.integer(forKey: refreshKey) == 120 { env["HV_HZ"] = "120" }
         if d.bool(forKey: superblocksKey) { env["HV_SUPERBLOCKS"] = "1" } else { unsetenv("HV_SUPERBLOCKS") }
@@ -40,8 +40,8 @@ enum EngineTuning {
                 env[String(line[..<eq]).trimmingCharacters(in: .whitespaces)] = String(line[line.index(after: eq)...]).trimmingCharacters(in: .whitespaces)
             }
         }
-        // Do not let a tuning file disable instruction fallbacks on an A12Z.
-        if Device.experimentalA12Z { env["HV_A12_COMPAT"] = "1" }
+        // Do not let a tuning file disable instruction fallbacks on an experimental A12 device.
+        if Device.experimentalA12 { env["HV_A12_COMPAT"] = "1" }
         for (k, v) in env.sorted(by: { $0.key < $1.key }) {
             setenv(k, v, 1)
             HengeLog.log("tuning", "\(k)=\(v)")

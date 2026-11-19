@@ -6,9 +6,15 @@ country selection and the account-creation form. Completing setup and a usable
 desktop remain unverified: GPU replay still faults on this device. The upstream
 minimum remains A14/M1 outside this experiment.
 
+The 4 GB 2018 11-inch iPad Pro (A12X, `iPad8,1` and `iPad8,3`) is also
+enabled for first boot testing. It starts with 2 GB of guest RAM, two guest
+CPUs and the smaller Performance display size. The host memory limit and
+Metal replay must still be tested on that device. On iPadOS 18 use a sideloaded
+IPA and an external JIT enabler as described below.
+
 ## CPU path
 
-The app sets `HV_A12_COMPAT=1` before constructing any virtual machine on A12Z.
+The app sets `HV_A12_COMPAT=1` before constructing any virtual machine on an experimental A12X/A12Z model.
 The machine snapshots that setting at initialization: changing it during a
 session does not change already translated blocks. To exercise the path on an
 Apple Silicon Mac, set the same environment variable before starting the engine.

@@ -14,7 +14,7 @@ struct InstallView: View {
     @State private var stageStarted = Date()
     @State private var stageSeen = -1
     @State private var confirmDeleteDownload: MacOSRelease?
-    @AppStorage("henge.cpus") private var cpus = Device.experimentalA12Z ? 2 : 4
+    @AppStorage("henge.cpus") private var cpus = Device.experimentalA12 ? 2 : 4
 
     var body: some View {
         NavigationStack {
@@ -39,8 +39,8 @@ struct InstallView: View {
     // MARK: Choosing
 
     @ViewBuilder private var chooser: some View {
-        if Device.experimentalA12Z {
-            NoticeRow(symbol: "exclamationmark.triangle.fill", text: Device.experimentalA12ZText)
+        if Device.experimentalA12 {
+            NoticeRow(symbol: "exclamationmark.triangle.fill", text: Device.experimentalA12Text)
                 .padding(.bottom, 12)
         }
         if !JITBootstrap.ready {
